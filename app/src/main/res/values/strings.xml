@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Ughali Quest KE</string>
+    <string name="prompt_login">Please login to find your Ughali</string>
+    <string name="button_text_login">Login</string>
 </resources>
