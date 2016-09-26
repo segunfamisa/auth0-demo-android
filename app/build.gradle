@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
+
     defaultConfig {
         applicationId "com.segunfamisa.auth0.demo"
         minSdkVersion 15
@@ -21,6 +22,7 @@ android {
 
 ext {
     supportLibraryVersion = '24.0.0'
+    auth0Version = '2.0.0-beta.3'
 
     // test dependencies
     jUnitVersion = '4.12'
@@ -29,7 +31,11 @@ ext {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
+
+    // auth0 dependency
+    compile "com.auth0.android:lock:$auth0Version"
 
     androidTestCompile("com.android.support.test.espresso:espresso-core:$espressoVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
