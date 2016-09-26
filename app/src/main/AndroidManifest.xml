@@ -19,6 +19,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".MainActivity" />
+
         <!-- begin auth0 lock activity -->
         <activity
             android:name="com.auth0.android.lock.LockActivity"

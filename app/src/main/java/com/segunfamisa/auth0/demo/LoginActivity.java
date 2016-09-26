@@ -1,5 +1,6 @@
 package com.segunfamisa.auth0.demo;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,6 +32,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private String TAG = "AuthenticationLog";
 
+    PrefUtils prefs;
+
     private Button mButtonLogin;
 
     @Override
@@ -53,28 +56,58 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .loginAfterSignUp(true)
                 .build();
         mLock.onCreate(this);
+
+        // init preferences
+        prefs = new PrefUtils(getApplicationContext());
+
+        if (prefs.getIdToken() != null) {
+            navigateToMainActivity();
+        }
     }
 
     private final LockCallback mLockCallback = new AuthenticationCallback() {
         @Override
-        public void onAuthentication(Credentials credentials) {
-            Log.d(TAG, "Authentication completed:");
-            Log.d(TAG, "AccessToken: " + credentials.getAccessToken());
-            Log.d(TAG, "IdToken: " + credentials.getIdToken());
+        public void onAuthentication(final Credentials credentials) {
+            // save credentials
+            prefs.saveCredentials(credentials.getAccessToken(), credentials.getRefreshToken(),
+                    credentials.getIdToken());
+
+            // Avoid updating the UI from here, because it's not on the main thread.
+            LoginActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    navigateToMainActivity();
+                }
+            });
         }
 
         @Override
         public void onCanceled() {
-            Snackbar.make(mButtonLogin, "Authentication canceled", Snackbar.LENGTH_INDEFINITE)
-                    .show();
+            LoginActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Snackbar.make(mButtonLogin, "Authentication canceled", Snackbar.LENGTH_INDEFINITE)
+                            .show();
+                }
+            });
         }
 
         @Override
-        public void onError(LockException error) {
-            Snackbar.make(mButtonLogin, "Error: " + error.getErrorMessage(getApplicationContext()),
-                    Snackbar.LENGTH_INDEFINITE).show();
+        public void onError(final LockException error) {
+            LoginActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Snackbar.make(mButtonLogin, "Error: " + error.getErrorMessage(getApplicationContext()),
+                            Snackbar.LENGTH_INDEFINITE).show();
+                }
+            });
         }
     };
+
+    private void navigateToMainActivity() {
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
+    }
 
     @Override
     protected void onDestroy() {

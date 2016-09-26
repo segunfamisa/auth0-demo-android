@@ -2,4 +2,7 @@
     <string name="app_name">Ughali Quest KE</string>
     <string name="prompt_login">Please login to find your Ughali</string>
     <string name="button_text_login">Login</string>
+    <string name="menu_logout">Logout</string>
+    <string name="text_bio">Bio: %s</string>
+    <string name="text_location">Location: %s</string>
 </resources>
