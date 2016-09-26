@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auth0_client_id">{ YOUR CLIENT ID GOES HERE }</string>
+    <string name="auth0_domain">{ YOUR AUTH0 DOMAIN GOES HERE }</string>
+</resources>
