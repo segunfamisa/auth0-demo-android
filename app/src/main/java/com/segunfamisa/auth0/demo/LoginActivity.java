@@ -9,11 +9,14 @@ import android.view.View;
 import android.widget.Button;
 
 import com.auth0.android.Auth0;
+import com.auth0.android.authentication.ParameterBuilder;
 import com.auth0.android.lock.AuthenticationCallback;
 import com.auth0.android.lock.Lock;
 import com.auth0.android.lock.LockCallback;
 import com.auth0.android.lock.utils.LockException;
 import com.auth0.android.result.Credentials;
+
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -48,12 +51,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // initialize auth account
         mAuth0 = new Auth0(getString(R.string.auth0_client_id), getString(R.string.auth0_domain));
 
+        // add offline_access parameter to ensure that refresh token is returned
+        ParameterBuilder builder = ParameterBuilder.newBuilder();
+        Map<String, Object> authenticationParameters = builder.setScope("openid offline_access").asDictionary();
         // initialize lock
         mLock = new Lock.Builder(mAuth0, mLockCallback)
                 .allowLogIn(true)
                 .allowSignUp(true)
                 .allowForgotPassword(true)
                 .loginAfterSignUp(true)
+                .withAuthenticationParameters(authenticationParameters)
                 .build();
         mLock.onCreate(this);
 

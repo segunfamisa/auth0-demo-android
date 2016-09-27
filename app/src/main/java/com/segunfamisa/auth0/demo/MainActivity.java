@@ -2,17 +2,21 @@ package com.segunfamisa.auth0.demo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.auth0.android.Auth0;
 import com.auth0.android.authentication.AuthenticationAPIClient;
 import com.auth0.android.authentication.AuthenticationException;
 import com.auth0.android.callback.BaseCallback;
+import com.auth0.android.result.Delegation;
 import com.auth0.android.result.UserProfile;
 import com.bumptech.glide.Glide;
 
@@ -73,9 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 .start(new BaseCallback<UserProfile, AuthenticationException>() {
                     @Override
                     public void onSuccess(final UserProfile payload) {
-                        Log.d(TAG, "User profile loaded");
-                        Log.d(TAG, payload.getName());
-
+                        Log.d(TAG, payload.getExtraInfo().toString());
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -87,7 +89,44 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(AuthenticationException error) {
-                        Log.e(TAG, "Error: " + error.getMessage());
+                        // this means that the id token has expired.
+                        // We need to request for a new one, using the refresh token
+                        requestNewIdToken();
+                    }
+                });
+    }
+
+    /**
+     * Request for new IdToken using the refresh token
+     */
+    private void requestNewIdToken() {
+        AuthenticationAPIClient client = new AuthenticationAPIClient(mAuth0);
+        client.delegationWithRefreshToken(mRefreshToken)
+                .start(new BaseCallback<Delegation, AuthenticationException>() {
+                    @Override
+                    public void onSuccess(Delegation payload) {
+                        // retrieve the new id token and update the saved one
+                        mIdToken = payload.getIdToken();
+                        mPrefs.saveIdToken(mIdToken);
+
+                        // try to validate the token again
+                        validateToken();
+                    }
+
+                    @Override
+                    public void onFailure(AuthenticationException error) {
+                        // Something went wrong while requesting a new id token.
+                        // This is likely to happen when the user has revoked access.
+                        // We need to prompt them to login again.
+                        Snackbar.make(mTextName,
+                                R.string.error_access_revoked, Snackbar.LENGTH_INDEFINITE)
+                                .setAction("Login", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        clearCredentialsAndLogout();
+                                    }
+                                })
+                                .show();
                     }
                 });
     }
