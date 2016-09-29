@@ -4,7 +4,7 @@ This is codelab from a workshop at [DevCraft 2016](http://dev-craft.co.ke) by me
 [Unicodeveloper](https://github.com/unicodeveloper) .
 
 A user signs into the app to unlock a tasty plate of Kenyan delicacy. Most likely the
-[Ughali](https://en.wikipedia.org/wiki/Ugali)
+[Ugali](https://en.wikipedia.org/wiki/Ugali)
 
 # Requirements
   * Android Studio
@@ -15,7 +15,7 @@ A user signs into the app to unlock a tasty plate of Kenyan delicacy. Most likel
 ![alt text](screens.png "App screens")
   1.  Landing screen for the app, where we prompt the user to login
   2.  Login screen presented by [Auth0 Lock](https://github.com/auth0/Lock.Android)
-  3.  The Ughali screen! After the user has logged in. We show some user details, and grant them access
+  3.  The Ugali screen! After the user has logged in. We show some user details, and grant them access
   to the awesome delicacy.
   4.  Error message shown when access has been revoked. Demonstrating the Session management with auth0.
 
